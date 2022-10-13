@@ -60,9 +60,9 @@ class MAIN:
                         pygame.draw.rect(screen, grass_color, grass_rect)
 
     def draw_score(self):
-        score_text = str(len(self.snake.body) - 3)
+        score_text = f'Score: {str(len(self.snake.body) - 3)}'
         score_surface = game_font.render(score_text, True, (255, 255, 255))
-        score_x = int(cell_size * cell_number - 60)
+        score_x = int(cell_size * cell_number - 120)
         score_y = int(cell_size * cell_number + 40)
         score_rect = score_surface.get_rect(center=(score_x, score_y))
         screen.blit(score_surface, score_rect)
