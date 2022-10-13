@@ -1,13 +1,17 @@
 import pygame, sys, random
 import pygame.joystick
 from pygame.math import Vector2
+
 pygame.joystick.init()
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 print(joysticks)
+
+
 class MAIN:
     def __init__(self):
         self.snake = SNAKE()
         self.fruit = FRUIT()
+        self.highest_score = 0
 
     def update(self):
         self.snake.move_snake()
@@ -18,6 +22,8 @@ class MAIN:
         self.draw_grass()
         self.fruit.draw_fruit()
         self.snake.draw_snake()
+        self.draw_score()
+        self.draw_highest_score()
 
     def check_collision(self):
         if self.fruit.pos == self.snake.body[0]:
@@ -40,7 +46,7 @@ class MAIN:
         self.snake.reset()
 
     def draw_grass(self):
-        grass_color = (37, 37, 37)
+        grass_color = (20, 20, 20)
         for row in range(cell_number):
             if row % 2 == 0:
                 for col in range(cell_number):
@@ -52,6 +58,26 @@ class MAIN:
                     if col % 2 != 0:
                         grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
                         pygame.draw.rect(screen, grass_color, grass_rect)
+
+    def draw_score(self):
+        score_text = str(len(self.snake.body) - 3)
+        score_surface = game_font.render(score_text, True, (255, 255, 255))
+        score_x = int(cell_size * cell_number - 60)
+        score_y = int(cell_size * cell_number + 40)
+        score_rect = score_surface.get_rect(center=(score_x, score_y))
+        screen.blit(score_surface, score_rect)
+
+    def draw_highest_score(self):
+
+        if int(len(self.snake.body) - 3) > self.highest_score:
+            self.highest_score = len(self.snake.body) - 3
+        hscore_text = f'Highest Score: {self.highest_score}'
+        hscore_surface = game_font.render(hscore_text, True, (255, 255, 255))
+        hscore_x = int(180)
+        hscore_y = int(cell_size * cell_number + 40)
+        hscore_rect = hscore_surface.get_rect(center=(hscore_x, hscore_y))
+        screen.blit(hscore_surface, hscore_rect)
+
 
 class SNAKE:
     def __init__(self):
@@ -117,16 +143,14 @@ cell_number = 20
 
 # The height and width of the screen is cell_size * cell_number
 
-screen = pygame.display.set_mode((cell_size * cell_number, cell_size * cell_number))
+screen = pygame.display.set_mode((cell_size * cell_number, cell_size * (cell_number+2)))
 
 clock = pygame.time.Clock()
-
+game_font = pygame.font.Font('RetroGaming.ttf', 25)
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE, 150)
 
 main_game = MAIN()
-
-
 
 while True:
     for event in pygame.event.get():
@@ -150,8 +174,6 @@ while True:
                     main_game.snake.direction = Vector2(1, 0)
 
         if event.type == pygame.JOYBUTTONDOWN:
-            print(event)
-
             if pygame.joystick.Joystick(0).get_button(3):
                 if main_game.snake.direction.y != 1:
                     main_game.snake.direction = Vector2(0, -1)
@@ -164,8 +186,6 @@ while True:
             if pygame.joystick.Joystick(0).get_button(1):
                 if main_game.snake.direction.x != -1:
                     main_game.snake.direction = Vector2(1, 0)
-
-
 
     screen.fill((0, 0, 0))
     main_game.draw_elements()
