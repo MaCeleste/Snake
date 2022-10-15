@@ -4,7 +4,7 @@ from pygame.math import Vector2
 
 pygame.joystick.init()
 joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
-print(joysticks)
+pygame.display.set_caption('Snake')
 
 
 class MAIN:
